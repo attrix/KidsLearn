@@ -7,6 +7,7 @@
 ########################################################################
 import smbus
 import time
+import math
 import RPi.GPIO as GPIO
 
 ledPins = [11, 12, 13, 15, 16, 18, 22, 32, 36,40]
@@ -52,37 +53,37 @@ def loop():
         value = analogRead(0)    #read the ADC value of channel 0
         analogWrite(value)        #write the DAC value
         voltage = value / 255.0 * 3.3  #calculate the voltage value
-        print ('ADC Value : %d, Voltage : %.2f'%(value,voltage))
-        if (voltage > 0.15):
+        #print ('ADC Value : %d, Voltage : %.2f'%(value,voltage))
+        if (voltage > 3.2):
             alertor(500)
-            switch_led(ledPins[0])
-        if (voltage > 0.30):
-            alertor(600)
-            switch_led(ledPins[1])
-        if (voltage > 0.45):
-            alertor(700)
-            switch_led(ledPins[2])
-        if (voltage > 0.60):
-            alertor(800)
-            switch_led(ledPins[3])
-        if (voltage > 0.75):
-            alertor(900)
-            switch_led(ledPins[4])
-        if (voltage > 0.90):
-            alertor(1000)
-            switch_led(ledPins[5])
-        if (voltage > 1.05):
-            alertor(1100)
-            switch_led(ledPins[6])
-        if (voltage > 1.20):
-            alertor(1200)
-            switch_led(ledPins[7])
-        if (voltage > 1.35):
-            alertor(1300)
-            switch_led(ledPins[8])
-        if (voltage > 1.50):
-            alertor(1400)
             switch_led(ledPins[9])
+        elif (voltage > 2.90):
+            alertor(1000)
+            switch_led(ledPins[8])
+        elif (voltage > 2.50):
+            alertor(1500)
+            switch_led(ledPins[7])
+        elif (voltage > 2.20):
+            alertor(2000)
+            switch_led(ledPins[6])
+        elif (voltage > 1.90):
+            alertor(2500)
+            switch_led(ledPins[5])
+        elif (voltage > 1.50):
+            alertor(3000)
+            switch_led(ledPins[4])
+        elif (voltage > 1.20):
+            alertor(3500)
+            switch_led(ledPins[3])
+        elif (voltage > 0.90):
+            alertor(4000)
+            switch_led(ledPins[2])
+        elif (voltage > 0.45):
+            alertor(4500)
+            switch_led(ledPins[1])
+        elif (voltage > 0.15):
+            alertor(5000)
+            switch_led(ledPins[0])
       
         
 
@@ -97,8 +98,10 @@ def alertor(tone):
     p.start(50)
     for x in range(0,361): #frequency of the alarm along the sine wave change
         sinVal = math.sin(x * (math.pi / 180.0)) #calculate the sine value
-        toneVal = 2000 + sinVal * tone #Add to the resonant frequency with a Weighted
-        p.ChangeFrequency(toneVal) #output PWM
+        toneVal = 10000 - (tone*2) + (sinVal * 500) #Add to the resonant frequency with a Weighted
+        #print ('Sinval is %.2f tone is %d'%(sinVal, toneVal))
+        if (toneVal > 2000):
+            p.ChangeFrequency(toneVal) #output PWM
         time.sleep(0.001)
 
 def setup():
