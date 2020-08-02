@@ -4,6 +4,7 @@
  *
  * @author (your name)
  * @version (a version number or a date)
+ * this is first comment
  */
 import java.util.Scanner;
 public class WordPattern
